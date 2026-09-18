@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visitor Check-In</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #16294f 0%, #1F3864 45%, #3b5998 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes popIn {
+    0% { opacity: 0; transform: scale(0.85); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .card {
+    background: #fff;
+    max-width: 420px;
+    width: 100%;
+    padding: 34px 26px;
+    border-radius: 18px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.28);
+    animation: fadeUp 0.5s ease-out;
+  }
+
+  .badge {
+    width: 54px; height: 54px;
+    background: linear-gradient(135deg, #1F3864, #4a6ba8);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    animation: popIn 0.5s ease-out 0.1s backwards;
+  }
+  .badge svg { width: 26px; height: 26px; stroke: #fff; }
+
+  h1 {
+    font-size: 21px;
+    margin: 0 0 4px;
+    color: #1F3864;
+    text-align: center;
+    font-weight: 700;
+  }
+  .subtitle {
+    text-align: center;
+    color: #90979f;
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+
+  .field {
+    margin-top: 16px;
+    opacity: 0;
+    animation: fadeUp 0.4s ease-out forwards;
+  }
+  .field:nth-of-type(1) { animation-delay: 0.15s; }
+  .field:nth-of-type(2) { animation-delay: 0.20s; }
+  .field:nth-of-type(3) { animation-delay: 0.25s; }
+  .field:nth-of-type(4) { animation-delay: 0.30s; }
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12.5px;
+    color: #555;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+  }
+  label svg { width: 14px; height: 14px; stroke: #1F3864; flex-shrink: 0; }
+
+  .input-wrap { position: relative; margin-top: 6px; }
+  input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #e6e9f0;
+    border-radius: 10px;
+    box-sizing: border-box;
+    font-size: 15px;
+    font-family: inherit;
+    background: #f8f9fc;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  input:focus {
+    outline: none;
+    border-color: #1F3864;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(31,56,100,0.08);
+  }
+
+  button {
+    margin-top: 26px;
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #1F3864, #3b5998);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15.5px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 8px 18px rgba(31,56,100,0.3);
+  }
+  button:active { transform: scale(0.97); }
+  button:disabled { opacity: 0.7; cursor: default; }
+
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2.5px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #status {
+    margin-top: 16px;
+    font-size: 14px;
+    text-align: center;
+    font-weight: 600;
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  #status.success { color: #1e8e3e; animation: popIn 0.3s ease-out; }
+  #status.error { color: #d93025; animation: popIn 0.3s ease-out; }
+  #status svg { width: 17px; height: 17px; }
+
+  .log-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+    margin-top: 22px;
+    color: #1F3864;
+    font-size: 13.5px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .log-link:hover { opacity: 0.7; }
+  .log-link svg { width: 14px; height: 14px; stroke: #1F3864; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="badge">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+  </div>
+  <h1>Visitor Check-In</h1>
+  <p class="subtitle">Please fill in your details below</p>
+
+  <form id="visitorForm">
+    <div class="field">
+      <label><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Full Name</label>
+      <div class="input-wrap"><input type="text" id="name" required></div>
+    </div>
+
+    <div class="field">
+      <label><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
