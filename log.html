@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Visitor Log</title>
+<title>Visitor Log — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; }
@@ -13,8 +13,10 @@
     min-height: 100vh;
     background: linear-gradient(135deg, #16294f 0%, #1F3864 45%, #3b5998 100%);
     padding: 20px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
@@ -23,23 +25,87 @@
     from { opacity: 0; transform: translateX(-8px); }
     to { opacity: 1; transform: translateX(0); }
   }
+  @keyframes shake {
+    10%, 90% { transform: translateX(-1px); }
+    20%, 80% { transform: translateX(2px); }
+    30%, 50%, 70% { transform: translateX(-4px); }
+    40%, 60% { transform: translateX(4px); }
+  }
 
+  /* --- Login gate --- */
+  .gate {
+    background: #fff;
+    max-width: 360px;
+    width: 100%;
+    padding: 34px 26px;
+    border-radius: 18px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.28);
+    animation: fadeUp 0.5s ease-out;
+    text-align: center;
+  }
+  .gate-icon {
+    width: 54px; height: 54px;
+    background: linear-gradient(135deg, #1F3864, #4a6ba8);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .gate-icon svg { width: 26px; height: 26px; stroke: #fff; }
+  .gate h1 { font-size: 20px; color: #1F3864; margin: 0 0 4px; font-weight: 700; }
+  .gate p { color: #90979f; font-size: 13px; margin: 0 0 20px; }
+  .gate input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #e6e9f0;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: inherit;
+    background: #f8f9fc;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+  .gate input:focus {
+    outline: none;
+    border-color: #1F3864;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(31,56,100,0.08);
+  }
+  .gate input.shake { animation: shake 0.4s; border-color: #d93025; }
+  .gate button {
+    margin-top: 16px;
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #1F3864, #3b5998);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .gate button:active { transform: scale(0.97); }
+  .gate-error {
+    color: #d93025;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 12px;
+    min-height: 16px;
+  }
+
+  /* --- Log view --- */
   .wrap {
     max-width: 720px;
+    width: 100%;
     margin: 0 auto;
     background: #fff;
     border-radius: 18px;
     padding: 26px 20px;
     box-shadow: 0 20px 45px rgba(0,0,0,0.28);
     animation: fadeUp 0.5s ease-out;
+    display: none;
   }
-
-  .header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 4px;
-  }
+  .header { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
   .header-icon {
     width: 40px; height: 40px;
     background: linear-gradient(135deg, #1F3864, #4a6ba8);
@@ -48,55 +114,42 @@
     flex-shrink: 0;
   }
   .header-icon svg { width: 20px; height: 20px; stroke: #fff; }
-
-  h1 { font-size: 19px; color: #1F3864; margin: 0; font-weight: 700; }
+  h2 { font-size: 19px; color: #1F3864; margin: 0; font-weight: 700; }
   .subtitle { color: #90979f; font-size: 12.5px; margin: 8px 0 18px; }
-
   .table-scroll { overflow-x: auto; border-radius: 12px; border: 1px solid #eef0f4; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 560px; }
   th {
-    background: #1F3864;
-    color: #fff;
-    padding: 11px 14px;
-    text-align: left;
-    font-weight: 600;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
+    background: #1F3864; color: #fff; padding: 11px 14px; text-align: left;
+    font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.3px;
   }
   td { padding: 11px 14px; border-bottom: 1px solid #eef0f4; color: #333; }
   tbody tr { animation: rowIn 0.35s ease-out backwards; transition: background 0.15s; }
   tbody tr:hover td { background: #f4f6fb; }
   tbody tr:nth-child(even) td { background: #fafbfd; }
-
   .empty { text-align: center; color: #999; padding: 30px 12px; }
-
-  .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 18px;
-    color: #1F3864;
-    font-size: 13.5px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: opacity 0.2s;
-  }
-  .back-link:hover { opacity: 0.7; }
-  .back-link svg { width: 14px; height: 14px; stroke: #1F3864; }
 </style>
 </head>
 <body>
 
-<div class="wrap">
+<div class="gate" id="gate">
+  <div class="gate-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+  </div>
+  <h1>Admin Access</h1>
+  <p>Enter the password to view the visitor log</p>
+  <input type="password" id="pwInput" placeholder="Password" autocomplete="off">
+  <button id="pwSubmit">Unlock</button>
+  <div class="gate-error" id="pwError"></div>
+</div>
+
+<div class="wrap" id="logWrap">
   <div class="header">
     <div class="header-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
     </div>
-    <h1>Visitor Log</h1>
+    <h2>Visitor Log</h2>
   </div>
   <p class="subtitle">Live record of all check-ins</p>
-
   <div class="table-scroll">
     <table>
       <thead>
@@ -107,11 +160,6 @@
       </tbody>
     </table>
   </div>
-
-  <a class="back-link" href="index.html">
-    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-    Back to Check-In
-  </a>
 </div>
 
 <script type="module">
@@ -128,30 +176,67 @@
     appId: "1:789269734621:web:071dc82156fad17ab22734"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  const logBody = document.getElementById("logBody");
+  const ADMIN_PASSWORD = "Amos22!!";
 
-  onValue(ref(db, "visitors"), (snapshot) => {
-    const data = snapshot.val();
-    logBody.innerHTML = "";
+  const gate = document.getElementById("gate");
+  const logWrap = document.getElementById("logWrap");
+  const pwInput = document.getElementById("pwInput");
+  const pwSubmit = document.getElementById("pwSubmit");
+  const pwError = document.getElementById("pwError");
 
-    if (!data) {
-      logBody.innerHTML = "<tr><td colspan='5' class='empty'>No visitors yet.</td></tr>";
-      return;
+  function tryUnlock() {
+    if (pwInput.value === ADMIN_PASSWORD) {
+      sessionStorage.setItem("visitorLogAuth", "1");
+      showLog();
+    } else {
+      pwError.textContent = "Incorrect password. Try again.";
+      pwInput.classList.remove("shake");
+      void pwInput.offsetWidth;
+      pwInput.classList.add("shake");
+      pwInput.value = "";
     }
+  }
 
-    const entries = Object.values(data).sort((a, b) => (b.checkInTime || 0) - (a.checkInTime || 0));
+  pwSubmit.addEventListener("click", tryUnlock);
+  pwInput.addEventListener("keydown", (e) => { if (e.key === "Enter") tryUnlock(); });
 
-    entries.forEach((v, i) => {
-      const time = v.checkInTime ? new Date(v.checkInTime).toLocaleString() : "-";
-      const row = document.createElement("tr");
-      row.style.animationDelay = (i * 0.05) + "s";
-      row.innerHTML = `<td>${v.name}</td><td>${v.phone}</td><td>${v.purpose}</td><td>${v.host}</td><td>${time}</td>`;
-      logBody.appendChild(row);
+  function showLog() {
+    gate.style.display = "none";
+    logWrap.style.display = "block";
+    loadLog();
+  }
+
+  function loadLog() {
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const logBody = document.getElementById("logBody");
+
+    onValue(ref(db, "visitors"), (snapshot) => {
+      const data = snapshot.val();
+      logBody.innerHTML = "";
+
+      if (!data) {
+        logBody.innerHTML = "<tr><td colspan='5' class='empty'>No visitors yet.</td></tr>";
+        return;
+      }
+
+      const entries = Object.values(data).sort((a, b) => (b.checkInTime || 0) - (a.checkInTime || 0));
+
+      entries.forEach((v, i) => {
+        const time = v.checkInTime ? new Date(v.checkInTime).toLocaleString() : "-";
+        const row = document.createElement("tr");
+        row.style.animationDelay = (i * 0.05) + "s";
+        row.innerHTML = `<td>${v.name}</td><td>${v.phone}</td><td>${v.purpose}</td><td>${v.host}</td><td>${time}</td>`;
+        logBody.appendChild(row);
+      });
     });
-  });
+  }
+
+  // Stay unlocked for this browser tab session (no re-typing on refresh)
+  if (sessionStorage.getItem("visitorLogAuth") === "1") {
+    showLog();
+  }
 </script>
 
 </body>
-                                                                                                                                                                                                  </html>
+</html>
